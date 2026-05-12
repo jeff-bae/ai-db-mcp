@@ -510,6 +510,32 @@ async def get_table(table_name: str):
 
 # ── Static files ───────────────────────────────────────────
 
+# ── pocket-kit 자동 클론 ────────────────────────────────────
+
+def ensure_pocket_kit():
+    """pocket-kit 폴더가 없으면 GitHub에서 자동으로 클론합니다."""
+    pk_dir = Path(__file__).parent / "pocket-kit"
+    if (pk_dir / "common.css").exists():
+        return
+    import subprocess
+    print("pocket-kit not found — cloning from GitHub...")
+    pk_dir.mkdir(exist_ok=True)
+    result = subprocess.run(
+        ["git", "clone", "--depth=1",
+         "https://github.com/jeff-bae/pocket-kit.git", str(pk_dir)],
+        capture_output=True, text=True,
+    )
+    if result.returncode != 0:
+        print("git clone failed:", result.stderr)
+    else:
+        print("pocket-kit cloned successfully.")
+
+
+# pocket-kit이 없으면 지금 바로 클론 (import 시점에 실행)
+ensure_pocket_kit()
+
+# ── Static files ───────────────────────────────────────────
+
 app.mount("/pocket-kit", StaticFiles(directory=str(Path(__file__).parent / "pocket-kit")), name="pocket-kit")
 app.mount("/static",     StaticFiles(directory=str(Path(__file__).parent / "static")),     name="static")
 
@@ -521,7 +547,11 @@ async def root():
 
 # ── Entry point ────────────────────────────────────────────
 
+@app.on_event("startup")
+async def on_startup():
+    init_db()
+
+
 if __name__ == "__main__":
     import uvicorn
-    init_db()
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=False)
