@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="ko" data-color-scheme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-MCP-DB · 자연어 데이터베이스 관리</title>
+
+  <!-- pocket-kit -->
+  <link rel="stylesheet" href="/pocket-kit/lib/fonts/remixicon/remixicon.css">
+  <link rel="stylesheet" href="/pocket-kit/common.css">
+  <link rel="stylesheet" href="/pocket-kit/components/css/buttons.css">
+  <link rel="stylesheet" href="/pocket-kit/components/css/forms.css">
+  <link rel="stylesheet" href="/pocket-kit/components/css/tables.css">
+  <link rel="stylesheet" href="/pocket-kit/components/css/navigation.css">
+  <link rel="stylesheet" href="/pocket-kit/components/css/alerts.css">
+  <link rel="stylesheet" href="/pocket-kit/components/css/typography.css">
+  <link rel="stylesheet" href="/pocket-kit/components/css/loader.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--fontFamily);
+      font-size: var(--fontSize);
+      background: var(--pageBgColor);
+      color: var(--surfaceTxtColor);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      height: 52px;
+      min-height: 52px;
+      background: var(--primaryColor);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 16px;
+      border-bottom: 1px solid var(--surfaceAlt3Color);
+      z-index: 100;
+    }
+    .topbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--primaryTxtColor);
+      white-space: nowrap;
+    }
+    .topbar-logo i { font-size: 20px; color: var(--accentColor); }
+    .topbar-divider { width: 1px; height: 22px; background: var(--surfaceAlt3Color); }
+    .topbar-tabs { display: flex; gap: 4px; flex: 1; }
+    .tab-btn {
+      padding: 5px 14px;
+      border-radius: var(--borderRadius);
+      border: none;
+      background: transparent;
+      color: var(--surfaceTxtHintColor);
+      font-size: 13px;
+      font-family: var(--fontFamily);
+      cursor: pointer;
+      transition: background var(--animationSpeed), color var(--animationSpeed);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-btn:hover { background: var(--surfaceAlt2Color); color: var(--surfaceTxtColor); }
+    .tab-btn.active { background: var(--accentColor); color: #fff; }
+    .tab-btn i { font-size: 15px; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .topbar-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: var(--surfaceSuccessColor);
+      color: var(--successColor);
+      font-weight: 600;
+    }
+
+    /* ── Main layout ── */
+    .main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ── Left: Chat panel ── */
+    .chat-panel {
+      width: 420px;
+      min-width: 320px;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--surfaceAlt2Color);
+      background: var(--surfaceColor);
+    }
+    .panel-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--surfaceAlt2Color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .panel-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--surfaceTxtColor);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .panel-title i { color: var(--accentColor); font-size: 16px; }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .chat-messages::-webkit-scrollbar { width: 5px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--surfaceAlt3Color); border-radius: 10px; }
+
+    .msg { display: flex; gap: 10px; align-items: flex-start; }
+    .msg.user { flex-direction: row-reverse; }
+
+    .msg-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .msg.ai .msg-avatar { background: var(--accentColor); color: #fff; }
+    .msg.user .msg-avatar { background: var(--surfaceAlt3Color); color: var(--surfaceTxtColor); }
+
+    .msg-bubble {
+      max-width: 78%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 12.5px;
+      line-height: 1.55;
+    }
+    /* AI 메시지는 SQL 로그가 붙으므로 전체 너비 허용 */
+    .msg.ai > div { min-width: 0; }
+    .msg.ai .msg-bubble {
+      max-width: 100%;
+      background: var(--surfaceAlt1Color);
+      color: var(--surfaceTxtColor);
+      border-bottom-left-radius: 4px;
+    }
+    .msg.user .msg-bubble {
+      background: var(--accentColor);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg-tool {
+      font-size: 11.5px;
+      color: var(--surfaceTxtHintColor);
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .tool-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--surfaceAlt2Color);
+      font-size: 11px;
+      color: var(--surfaceTxtHintColor);
+      font-family: var(--monoFontFamily);
+    }
+    .tool-pill i { font-size: 12px; }
+    .tool-pill.query { color: var(--infoColor); }
+    .tool-pill.modify { color: var(--warningColor); }
+    .tool-pill.schema { color: var(--successColor); }
+    .tool-pill.changed { color: var(--successColor); background: var(--surfaceSuccessColor); }
+
+    /* ── SQL Log ── */
+    .sql-log-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+    .sql-log-item {
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--surfaceAlt3Color);
+      font-size: 12px;
+    }
+    .sql-log-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+    .sql-log-header.query  { background: color-mix(in srgb, var(--infoColor), var(--surfaceColor) 82%);   color: var(--infoColor); }
+    .sql-log-header.modify { background: color-mix(in srgb, var(--warningColor), var(--surfaceColor) 82%); color: var(--warningColor); }
+    .sql-log-header.schema { background: color-mix(in srgb, var(--successColor), var(--surfaceColor) 82%); color: var(--successColor); }
+    .sql-log-header i { font-size: 13px; }
+    .sql-log-body {
+      background: var(--prismBg);
+      padding: 8px 10px;
+      font-family: var(--monoFontFamily);
+      font-size: 12px;
+      color: var(--prismTxtColor);
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.6;
+    }
+    .sql-log-footer {
+      padding: 4px 10px;
+      font-size: 11px;
+      color: var(--surfaceTxtHintColor);
+      background: var(--surfaceAlt1Color);
+      border-top: 1px solid var(--surfaceAlt2Color);
+    }
+    .sql-log-footer.success { color: var(--successColor); }
+    .sql-log-footer.error   { color: var(--dangerColor); }
+
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 10px 14px;
+      background: var(--surfaceAlt1Color);
+      border-radius: 12px;
+      border-bottom-left-radius: 4px;
+      width: fit-content;
+    }
+    .typing-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--surfaceTxtHintColor);
+      animation: bounce 1.2s infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-6px); }
+    }
+
+    .chat-input-area {
+      padding: 14px 16px;
+      border-top: 1px solid var(--surfaceAlt2Color);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .chat-input-row { display: flex; gap: 8px; align-items: flex-end; }
+    .chat-textarea {
+      flex: 1;
+      resize: none;
+      background: var(--surfaceAlt2Color);
+      border: 1px solid var(--inputBorderColor);
+      border-radius: var(--borderRadius);
+      padding: 10px 13px;
+      font-size: 13.5px;
+      font-family: var(--fontFamily);
+      color: var(--surfaceTxtColor);
+      line-height: 1.5;
+      min-height: 42px;
+      max-height: 120px;
+      overflow-y: auto;
+      transition: border-color var(--animationSpeed);
+      outline: none;
+    }
+    .chat-textarea:focus { border-color: var(--accentColor); background: var(--inputFocusColor); }
+    .chat-textarea::placeholder { color: var(--surfaceTxtDisabledColor); }
+
+    .send-btn {
+      height: 42px;
+      width: 42px;
+      border-radius: var(--borderRadius);
+      background: var(--accentColor);
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity var(--animationSpeed);
+      flex-shrink: 0;
+    }
+    .send-btn:hover { opacity: 0.85; }
+    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .quick-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .suggestion-chip {
+      padding: 4px 11px;
+      border-radius: 20px;
+      background: var(--surfaceAlt2Color);
+      border: 1px solid var(--surfaceAlt3Color);
+      color: var(--surfaceTxtHintColor);
+      font-size: 12px;
+      cursor: pointer;
+      font-family: var(--fontFamily);
+      transition: all var(--animationSpeed);
+    }
+    .suggestion-chip:hover {
+      background: var(--accentColor);
+      border-color: var(--accentColor);
+      color: #fff;
+    }
+
+    /* ── Right: Data panel ── */
+    .data-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--surfaceColor);
+    }
+
+    .data-toolbar {
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--surfaceAlt2Color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .table-tabs { display: flex; gap: 4px; flex: 1; }
+    .table-tab {
+      padding: 5px 13px;
+      border-radius: var(--borderRadius);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--surfaceTxtHintColor);
+      font-size: 12.5px;
+      font-family: var(--fontFamily);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all var(--animationSpeed);
+    }
+    .table-tab:hover { background: var(--surfaceAlt1Color); color: var(--surfaceTxtColor); }
+    .table-tab.active {
+      background: var(--surfaceAlt2Color);
+      border-color: var(--surfaceAlt3Color);
+      color: var(--surfaceTxtColor);
+      font-weight: 600;
+    }
+    .table-tab .row-count {
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      background: var(--surfaceAlt3Color);
+      color: var(--surfaceTxtHintColor);
+    }
+
+    .data-table-wrap {
+      flex: 1;
+      overflow: auto;
+      padding: 0;
+    }
+    .data-table-wrap::-webkit-scrollbar { width: 6px; height: 6px; }
+    .data-table-wrap::-webkit-scrollbar-track { background: transparent; }
+    .data-table-wrap::-webkit-scrollbar-thumb { background: var(--surfaceAlt3Color); border-radius: 10px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    thead tr {
+      background: var(--surfaceAlt1Color);
+      border-bottom: 2px solid var(--surfaceAlt2Color);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    th {
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--surfaceTxtHintColor);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    td {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--surfaceAlt1Color);
+      color: var(--surfaceTxtColor);
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    tbody tr:hover td { background: var(--surfaceAlt1Color); }
+    td.num { font-family: var(--monoFontFamily); font-size: 12.5px; }
+
+    .status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .status-DELIVERED  { background: var(--surfaceSuccessColor); color: var(--successColor); }
+    .status-SHIPPED    { background: var(--surfaceInfoColor);    color: var(--infoColor); }
+    .status-CONFIRMED  { background: var(--surfaceWarningColor); color: var(--warningColor); }
+    .status-PENDING    { background: var(--surfaceAlt2Color);    color: var(--surfaceTxtHintColor); }
+    .status-CANCELLED  { background: var(--surfaceDangerColor);  color: var(--dangerColor); }
+    .grade-VIP  { background: var(--surfaceDangerColor); color: var(--dangerColor); }
+    .grade-GOLD { background: var(--surfaceWarningColor); color: var(--warningColor); }
+    .grade-NORMAL { background: var(--surfaceAlt2Color); color: var(--surfaceTxtHintColor); }
+
+    .data-footer {
+      padding: 8px 18px;
+      border-top: 1px solid var(--surfaceAlt2Color);
+      font-size: 12px;
+      color: var(--surfaceTxtHintColor);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: var(--borderRadius);
+      background: var(--surfaceAlt2Color);
+      border: none;
+      color: var(--surfaceTxtHintColor);
+      font-size: 12px;
+      font-family: var(--fontFamily);
+      cursor: pointer;
+      transition: all var(--animationSpeed);
+      margin-left: auto;
+    }
+    .refresh-btn:hover { background: var(--surfaceAlt3Color); color: var(--surfaceTxtColor); }
+    .refresh-btn i { font-size: 14px; }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      color: var(--surfaceTxtHintColor);
+      gap: 10px;
+    }
+    .empty-state i { font-size: 36px; opacity: 0.4; }
+
+    /* spinner */
+    .spin { animation: spin 0.8s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+
+<body>
+  <!-- ── Topbar ── -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <i class="ri-database-2-line"></i>
+      AI-MCP-DB
+    </div>
+    <div class="topbar-divider"></div>
+    <div class="topbar-tabs" id="tableTabs">
+      <!-- populated by JS -->
+    </div>
+    <div class="topbar-right">
+      <span id="providerBadge" class="topbar-badge" style="background:var(--surfaceAccentColor);color:var(--accentColor)">claude-sonnet</span>
+      <span class="topbar-badge" id="statusBadge">● 연결됨</span>
+      <button class="tab-btn" id="resetBtn" title="대화 초기화">
+        <i class="ri-restart-line"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- ── Chat panel ── -->
+    <div class="chat-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i class="ri-sparkling-line"></i>
+          AI 자연어 대화
+        </div>
+        <span style="font-size:11px;color:var(--surfaceTxtHintColor);">claude-sonnet-4-6</span>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg ai">
+          <div class="msg-avatar"><i class="ri-robot-line"></i></div>
+          <div>
+            <div class="msg-bubble">
+              안녕하세요! 저는 데이터베이스 AI 어시스턴트입니다.<br>
+              자연어로 데이터를 조회·수정·통계 분석할 수 있습니다.<br><br>
+              예시: <em>"전체 고객 수 알려줘"</em>, <em>"서울 VIP 고객 목록 보여줘"</em>, <em>"주문 금액 통계 분석해줘"</em>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <div class="quick-suggestions">
+          <button class="suggestion-chip" onclick="sendSuggestion('전체 테이블 구조 알려줘')">테이블 구조</button>
+          <button class="suggestion-chip" onclick="sendSuggestion('주문 금액 통계 분석해줘')">주문 통계</button>
+          <button class="suggestion-chip" onclick="sendSuggestion('고객 등급별 인원수 보여줘')">등급별 분석</button>
+          <button class="suggestion-chip" onclick="sendSuggestion('재고 10개 이하인 상품 알려줘')">재고 현황</button>
+          <button class="suggestion-chip" onclick="sendSuggestion('최근 배송완료 주문 5건 보여줘')">최근 주문</button>
+          <button class="suggestion-chip" onclick="sendSuggestion('카테고리별 상품 매출 합계 분석해줘')">매출 분석</button>
+        </div>
+        <div class="chat-input-row">
+          <textarea
+            class="chat-textarea"
+            id="chatInput"
+            placeholder="데이터에 대해 자유롭게 질문하세요..."
+            rows="1"
+          ></textarea>
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+            <i class="ri-send-plane-fill"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Data panel ── -->
+    <div class="data-panel">
+      <div class="data-toolbar">
+        <div class="table-tabs" id="tableTabButtons">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <div class="data-table-wrap" id="dataTableWrap">
+        <div class="empty-state">
+          <i class="ri-table-line"></i>
+          <span>테이블을 선택하세요</span>
+        </div>
+      </div>
+
+      <div class="data-footer">
+        <span id="tableInfo">–</span>
+        <button class="refresh-btn" onclick="refreshCurrentTable()">
+          <i class="ri-refresh-line"></i> 새로고침
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- pocket-kit JS -->
+  <script src="/pocket-kit/components/js/theme.js"></script>
+  <script src="/pocket-kit/components/js/toast.js"></script>
+
+  <script>
+    // ── State ───────────────────────────────────────────
+    let currentTable = null;
+    let tablesMeta = {};
+    let isLoading = false;
+
+    // ── Init ────────────────────────────────────────────
+    async function init() {
+      await loadTables();
+      if (Object.keys(tablesMeta).length > 0) {
+        selectTable(Object.keys(tablesMeta)[0]);
+      }
+    }
+
+    // ── Table loading ────────────────────────────────────
+    async function loadTables() {
+      try {
+        const res = await fetch('/api/tables');
+        tablesMeta = await res.json();
+        renderTableTabs();
+        renderTopbarTabs();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function renderTopbarTabs() {
+      const el = document.getElementById('tableTabs');
+      el.innerHTML = '';
+      for (const [name, meta] of Object.entries(tablesMeta)) {
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn' + (name === currentTable ? ' active' : '');
+        btn.innerHTML = `<i class="ri-table-line"></i> ${name}`;
+        btn.onclick = () => selectTable(name);
+        el.appendChild(btn);
+      }
+    }
+
+    function renderTableTabs() {
+      const el = document.getElementById('tableTabButtons');
+      el.innerHTML = '';
+      for (const [name, meta] of Object.entries(tablesMeta)) {
+        const btn = document.createElement('button');
+        btn.className = 'table-tab' + (name === currentTable ? ' active' : '');
+        btn.dataset.table = name;
+        btn.innerHTML = `
+          <i class="ri-table-line"></i>
+          ${name}
+          <span class="row-count">${meta.row_count}</span>
+        `;
+        btn.onclick = () => selectTable(name);
+        el.appendChild(btn);
+      }
+    }
+
+    async function selectTable(name) {
+      currentTable = name;
+      renderTopbarTabs();
+      renderTableTabs();
+      await fetchTableData(name);
+    }
+
+    async function fetchTableData(name) {
+      const wrap = document.getElementById('dataTableWrap');
+      wrap.innerHTML = `<div class="empty-state"><i class="ri-loader-4-line spin" style="font-size:28px"></i></div>`;
+      try {
+        const res = await fetch(`/api/table/${name}`);
+        const data = await res.json();
+        renderTable(data);
+        document.getElementById('tableInfo').textContent =
+          `${name} · ${data.count}개 행 · ${data.columns?.length || 0}개 컬럼`;
+      } catch (e) {
+        wrap.innerHTML = `<div class="empty-state"><i class="ri-error-warning-line"></i><span>데이터 로드 실패</span></div>`;
+      }
+    }
+
+    function renderTable(data) {
+      const wrap = document.getElementById('dataTableWrap');
+      if (!data.rows || data.rows.length === 0) {
+        wrap.innerHTML = `<div class="empty-state"><i class="ri-inbox-line"></i><span>데이터 없음</span></div>`;
+        return;
+      }
+      const table = document.createElement('table');
+      const thead = `<thead><tr>${data.columns.map(c => `<th>${c}</th>`).join('')}</tr></thead>`;
+      const rows = data.rows.map(row => {
+        const cells = data.columns.map(col => {
+          const val = row[col];
+          return `<td class="${typeof val === 'number' ? 'num' : ''}">${formatCell(col, val)}</td>`;
+        }).join('');
+        return `<tr>${cells}</tr>`;
+      }).join('');
+      table.innerHTML = thead + `<tbody>${rows}</tbody>`;
+      wrap.innerHTML = '';
+      wrap.appendChild(table);
+    }
+
+    function formatCell(col, val) {
+      if (val === null || val === undefined) return `<span style="color:var(--surfaceTxtDisabledColor)">–</span>`;
+      // 영문 컬럼명
+      if (col === 'status') return `<span class="status-badge status-${val}">${statusLabel(val)}</span>`;
+      if (col === 'grade')  return `<span class="status-badge grade-${val}">${val}</span>`;
+      if (col === 'amount' || col === 'price') return `₩${Number(val).toLocaleString()}`;
+      // 한국어 컬럼명 (orders JOIN 결과)
+      if (col === '상태') return `<span class="status-badge status-${val}">${statusLabel(val)}</span>`;
+      if (col === '금액') return `₩${Number(val).toLocaleString()}`;
+      return String(val);
+    }
+
+    function statusLabel(s) {
+      return { PENDING:'대기', CONFIRMED:'확인', SHIPPED:'배송중', DELIVERED:'배송완료', CANCELLED:'취소' }[s] || s;
+    }
+
+    async function refreshCurrentTable() {
+      if (!currentTable) return;
+      await loadTables();
+      await fetchTableData(currentTable);
+    }
+
+    // ── Chat ─────────────────────────────────────────────
+    function sendSuggestion(text) {
+      document.getElementById('chatInput').value = text;
+      sendMessage();
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text || isLoading) return;
+
+      input.value = '';
+      input.style.height = 'auto';
+      appendMessage('user', text);
+      const typingEl = appendTyping();
+      setLoading(true);
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text })
+        });
+        const data = await res.json();
+        typingEl.remove();
+        appendAIMessage(data);
+        updateProviderBadge(data.provider);
+
+        if (data.data_changed) {
+          await loadTables();
+          if (currentTable) await fetchTableData(currentTable);
+          appendSystemNotice('데이터가 변경되어 테이블을 새로고침했습니다.');
+        }
+      } catch (e) {
+        typingEl.remove();
+        appendMessage('ai', '오류가 발생했습니다. 다시 시도해 주세요.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function appendMessage(role, text) {
+      const msgs = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = `msg ${role}`;
+      const icon = role === 'ai' ? 'ri-robot-line' : 'ri-user-line';
+      div.innerHTML = `
+        <div class="msg-avatar"><i class="${icon}"></i></div>
+        <div><div class="msg-bubble">${escHtml(text).replace(/\n/g,'<br>')}</div></div>
+      `;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+      return div;
+    }
+
+    function appendAIMessage(data) {
+      const msgs = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'msg ai';
+
+      // SQL log blocks
+      let sqlLogHtml = '';
+      if (data.tool_calls && data.tool_calls.length > 0) {
+        const items = data.tool_calls.map(tc => {
+          if (tc.tool === 'get_schema') {
+            const tables = Object.keys(tc.result || {});
+            return `
+              <div class="sql-log-item">
+                <div class="sql-log-header schema"><i class="ri-file-list-line"></i> SCHEMA 조회</div>
+                <div class="sql-log-body">테이블: ${tables.join(', ')}</div>
+                <div class="sql-log-footer success">✓ ${tables.length}개 테이블 확인</div>
+              </div>`;
+          }
+          if (tc.tool === 'query_database') {
+            const sql = (tc.input?.sql || '').trim();
+            const res = tc.result || {};
+            const footer = res.error
+              ? `<div class="sql-log-footer error">✗ 오류: ${escHtml(res.error)}</div>`
+              : `<div class="sql-log-footer success">✓ ${res.count}행 반환</div>`;
+            return `
+              <div class="sql-log-item">
+                <div class="sql-log-header query"><i class="ri-search-line"></i> SELECT 조회</div>
+                <div class="sql-log-body">${escHtml(sql)}</div>
+                ${footer}
+              </div>`;
+          }
+          if (tc.tool === 'modify_database') {
+            const sql = (tc.input?.sql || '').trim();
+            const desc = tc.input?.description || '';
+            const res = tc.result || {};
+            const footer = res.error
+              ? `<div class="sql-log-footer error">✗ 오류: ${escHtml(res.error)}</div>`
+              : `<div class="sql-log-footer success">✓ ${res.affected_rows}행 변경됨</div>`;
+            return `
+              <div class="sql-log-item">
+                <div class="sql-log-header modify"><i class="ri-edit-line"></i> 데이터 수정 — ${escHtml(desc)}</div>
+                <div class="sql-log-body">${escHtml(sql)}</div>
+                ${footer}
+              </div>`;
+          }
+          return '';
+        }).join('');
+
+        sqlLogHtml = `<div class="sql-log-list">${items}</div>`;
+      }
+
+      div.innerHTML = `
+        <div class="msg-avatar"><i class="ri-robot-line"></i></div>
+        <div style="flex:1;min-width:0">
+          <div class="msg-bubble">${escHtml(data.reply).replace(/\n/g,'<br>')}</div>
+          ${sqlLogHtml}
+        </div>
+      `;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function appendTyping() {
+      const msgs = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'msg ai';
+      div.innerHTML = `
+        <div class="msg-avatar"><i class="ri-robot-line"></i></div>
+        <div>
+          <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+      `;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+      return div;
+    }
+
+    function appendSystemNotice(text) {
+      const msgs = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.style.cssText = 'text-align:center;font-size:11.5px;color:var(--successColor);padding:4px 0;';
+      div.innerHTML = `<i class="ri-check-double-line"></i> ${text}`;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function setLoading(v) {
+      isLoading = v;
+      document.getElementById('sendBtn').disabled = v;
+    }
+
+    function updateProviderBadge(provider) {
+      const badge = document.getElementById('providerBadge');
+      if (!badge) return;
+      if (provider === 'deepseek') {
+        badge.textContent = 'deepseek-chat';
+        badge.style.background = 'var(--surfaceWarningColor)';
+        badge.style.color = 'var(--warningColor)';
+      } else {
+        badge.textContent = 'claude-sonnet';
+        badge.style.background = 'var(--surfaceAccentColor)';
+        badge.style.color = 'var(--accentColor)';
+      }
+    }
+
+    function escHtml(s) {
+      return String(s)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+
+    // ── Reset ─────────────────────────────────────────────
+    document.getElementById('resetBtn').onclick = async () => {
+      await fetch('/api/reset', { method: 'POST' });
+      const msgs = document.getElementById('chatMessages');
+      msgs.innerHTML = '';
+      appendMessage('ai', '대화가 초기화되었습니다. 새로운 질문을 해주세요!');
+    };
+
+    // ── Textarea auto-resize ──────────────────────────────
+    document.getElementById('chatInput').addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+    document.getElementById('chatInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+
+    init();
+  </script>
+</body>
+</html>
