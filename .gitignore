@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# DB (샘플 데이터는 자동 생성됨)
+demo.db
+
+# 환경변수 (절대 커밋 금지)
+.env
+
+# 로그
+server.log
+
+# pocket-kit은 자동 클론되므로 제외
+pocket-kit/
