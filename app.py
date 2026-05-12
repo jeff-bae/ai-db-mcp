@@ -21,10 +21,9 @@ DB_PATH = Path(__file__).parent / "demo.db"
 
 # ── AI clients ─────────────────────────────────────────────
 anthropic_client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY", ""))
-deepseek_client  = OpenAI(
-    api_key=os.environ.get("DEEPSEEK_API_KEY", ""),
-    base_url="https://api.deepseek.com",
-)
+
+_deepseek_key = os.environ.get("DEEPSEEK_API_KEY", "")
+deepseek_client = OpenAI(api_key=_deepseek_key, base_url="https://api.deepseek.com") if _deepseek_key else None
 
 SYSTEM_PROMPT = """당신은 SQLite 데이터베이스를 관리하는 AI 어시스턴트입니다.
 사용자의 한국어 자연어 요청을 이해하여 적절한 SQL 쿼리를 실행합니다.
@@ -337,6 +336,8 @@ def run_anthropic(user_message: str):
 # ── DeepSeek chat ──────────────────────────────────────────
 
 def run_deepseek(user_message: str):
+    if deepseek_client is None:
+        raise RuntimeError("DEEPSEEK_API_KEY가 설정되지 않았습니다.")
     # 히스토리가 비어있으면 system 메시지 먼저 추가
     if not deepseek_history:
         deepseek_history.append({"role": "system", "content": SYSTEM_PROMPT})
@@ -415,6 +416,10 @@ async def chat(req: ChatRequest):
     def _run_deepseek_safe(msg):
         try:
             return run_deepseek(msg)
+        except RuntimeError as e:
+            # DEEPSEEK_API_KEY 미설정
+            r = "DEEPSEEK_API_KEY가 설정되지 않았습니다.\n.env 파일에 키를 추가하거나 Anthropic 크레딧을 충전해 주세요."
+            return r, [], False
         except Exception as e:
             err = str(e)
             if "402" in err or "Insufficient Balance" in err or "insufficient" in err.lower():
@@ -462,7 +467,11 @@ async def reset_chat():
 
 @app.get("/api/status")
 async def get_status():
-    return {"provider": active_provider}
+    return {
+        "provider": active_provider,
+        "anthropic_configured": bool(os.environ.get("ANTHROPIC_API_KEY")),
+        "deepseek_configured": deepseek_client is not None,
+    }
 
 
 @app.get("/api/tables")
