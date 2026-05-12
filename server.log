@@ -1,160 +1,77 @@
-INFO:     Started server process [16192]
+INFO:     Started server process [34332]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:56115 - "POST /api/chat HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:56122 - "POST /api/chat HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56130 - "POST /api/chat HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56138 - "POST /api/chat HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:56156 - "POST /api/chat HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:56166 - "POST /api/chat HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:56182 - "POST /api/chat HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56207 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56207 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56208 - "GET /pocket-kit/common.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56209 - "GET /pocket-kit/components/css/buttons.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56209 - "GET /pocket-kit/components/css/tables.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56208 - "GET /pocket-kit/components/css/forms.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56207 - "GET /pocket-kit/components/css/navigation.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56209 - "GET /pocket-kit/components/css/alerts.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56208 - "GET /pocket-kit/components/css/typography.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56207 - "GET /pocket-kit/components/css/loader.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56209 - "GET /pocket-kit/components/js/theme.js HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56208 - "GET /pocket-kit/components/js/toast.js HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56207 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-regular.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56208 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-600.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56209 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56207 - "GET /api/tables HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56208 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-italic.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56209 - "GET /api/table/customers HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56209 - "GET /pocket-kit/lib/fonts/ibm-plex-mono/ibm-plex-mono-regular.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56209 - "GET /favicon.ico HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:56221 - "GET /pocket-kit/components/js/theme.js HTTP/1.1" 304 Not Modified
-INFO:     127.0.0.1:56220 - "GET /pocket-kit/components/js/toast.js HTTP/1.1" 304 Not Modified
-INFO:     127.0.0.1:56216 - "POST /api/chat HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56217 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:56218 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:56218 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /pocket-kit/common.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /pocket-kit/components/css/buttons.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /pocket-kit/components/css/forms.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /pocket-kit/components/css/tables.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /pocket-kit/components/css/navigation.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /pocket-kit/components/css/alerts.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /pocket-kit/components/css/typography.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /pocket-kit/components/css/loader.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-600.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-regular.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-italic.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /pocket-kit/components/js/theme.js HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56302 - "GET /pocket-kit/components/js/toast.js HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /api/tables HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /api/table/customers HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /pocket-kit/lib/fonts/ibm-plex-mono/ibm-plex-mono-regular.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56218 - "GET /favicon.ico HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:56395 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:56397 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/common.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/components/css/buttons.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/components/css/forms.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/components/css/tables.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/components/css/navigation.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/components/css/alerts.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/components/css/typography.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/components/css/loader.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-600.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-regular.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-italic.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/components/js/theme.js HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/components/js/toast.js HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /api/tables HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /api/table/customers HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56397 - "GET /favicon.ico HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:56397 - "GET /pocket-kit/lib/fonts/ibm-plex-mono/ibm-plex-mono-regular.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56442 - "GET /api/table/orders HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56442 - "GET /api/table/products HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56442 - "GET /api/table/customers HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58836 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58836 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:58836 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58837 - "GET /pocket-kit/common.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58836 - "GET /pocket-kit/components/css/buttons.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58837 - "GET /pocket-kit/components/css/forms.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58836 - "GET /pocket-kit/components/css/tables.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58837 - "GET /pocket-kit/components/css/navigation.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58836 - "GET /pocket-kit/components/css/alerts.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58837 - "GET /pocket-kit/components/css/typography.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58836 - "GET /pocket-kit/components/css/loader.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58836 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-600.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58837 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-regular.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58837 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-italic.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58836 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58837 - "GET /pocket-kit/components/js/theme.js HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58836 - "GET /pocket-kit/components/js/toast.js HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58836 - "GET /api/tables HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58836 - "GET /api/table/customers HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58836 - "GET /pocket-kit/lib/fonts/ibm-plex-mono/ibm-plex-mono-regular.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58836 - "GET /favicon.ico HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:58850 - "GET /pocket-kit/components/js/toast.js HTTP/1.1" 304 Not Modified
-INFO:     127.0.0.1:58849 - "GET /pocket-kit/components/js/theme.js HTTP/1.1" 304 Not Modified
-INFO:     127.0.0.1:64223 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64223 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64224 - "GET /pocket-kit/common.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64223 - "GET /pocket-kit/components/css/buttons.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64224 - "GET /pocket-kit/components/css/forms.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64223 - "GET /pocket-kit/components/css/tables.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64224 - "GET /pocket-kit/components/css/navigation.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64223 - "GET /pocket-kit/components/css/alerts.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64223 - "GET /pocket-kit/components/css/loader.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64224 - "GET /pocket-kit/components/css/typography.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64224 - "GET /pocket-kit/components/js/theme.js HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64223 - "GET /pocket-kit/components/js/toast.js HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64223 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64224 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-600.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64224 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-regular.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64223 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-italic.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64223 - "GET /api/tables HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64223 - "GET /api/table/customers HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64223 - "GET /pocket-kit/lib/fonts/ibm-plex-mono/ibm-plex-mono-regular.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64223 - "GET /favicon.ico HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:64235 - "GET /pocket-kit/components/js/theme.js HTTP/1.1" 304 Not Modified
-INFO:     127.0.0.1:64236 - "GET /pocket-kit/components/js/toast.js HTTP/1.1" 304 Not Modified
-INFO:     127.0.0.1:64230 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:64231 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64231 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:64231 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64232 - "GET /pocket-kit/common.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64233 - "GET /pocket-kit/components/css/buttons.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64231 - "GET /pocket-kit/components/css/forms.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64232 - "GET /pocket-kit/components/css/tables.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64231 - "GET /pocket-kit/components/css/alerts.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64233 - "GET /pocket-kit/components/css/navigation.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64232 - "GET /pocket-kit/components/css/typography.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64231 - "GET /pocket-kit/components/css/loader.css HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64233 - "GET /pocket-kit/components/js/theme.js HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64232 - "GET /pocket-kit/components/js/toast.js HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64233 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-regular.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64231 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-600.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64232 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-italic.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64231 - "GET /api/tables HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64233 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64231 - "GET /api/table/customers HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64233 - "GET /pocket-kit/lib/fonts/ibm-plex-mono/ibm-plex-mono-regular.woff2 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64233 - "GET /favicon.ico HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:64293 - "GET /api/table/orders HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64293 - "GET /api/table/products HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64293 - "GET /api/table/customers HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64293 - "POST /api/chat HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64294 - "POST /api/chat HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64295 - "POST /api/chat HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64402 - "POST /api/chat HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64402 - "GET /api/tables HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64402 - "GET /api/table/customers HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64404 - "POST /api/chat HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64404 - "GET /api/tables HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64404 - "GET /api/table/customers HTTP/1.1" 200 OK
+MCP Server ready at http://localhost:8001/sse
+INFO:     127.0.0.1:52833 - "POST /api/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52923 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52923 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52923 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52923 - "GET /pocket-kit/common.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52924 - "GET /pocket-kit/components/css/buttons.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52923 - "GET /pocket-kit/components/css/tables.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52924 - "GET /pocket-kit/components/css/navigation.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52925 - "GET /pocket-kit/components/css/forms.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52923 - "GET /pocket-kit/components/css/alerts.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52924 - "GET /pocket-kit/components/css/typography.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52925 - "GET /pocket-kit/components/css/loader.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52923 - "GET /pocket-kit/components/js/theme.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52924 - "GET /pocket-kit/components/js/toast.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52924 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-600.woff2 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52923 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-regular.woff2 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52925 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-italic.woff2 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52924 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.woff2 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52924 - "GET /api/tables HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52924 - "GET /api/table/customers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52924 - "GET /pocket-kit/lib/fonts/ibm-plex-mono/ibm-plex-mono-regular.woff2 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52935 - "GET /pocket-kit/components/js/theme.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52936 - "GET /pocket-kit/components/js/toast.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52924 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52924 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52925 - "GET /pocket-kit/common.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52923 - "GET /pocket-kit/components/css/buttons.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52924 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52932 - "GET /pocket-kit/components/css/tables.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52934 - "GET /pocket-kit/components/css/navigation.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52933 - "GET /pocket-kit/components/css/forms.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52925 - "GET /pocket-kit/components/css/alerts.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52923 - "GET /pocket-kit/components/css/typography.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52924 - "GET /pocket-kit/components/css/loader.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52932 - "GET /pocket-kit/components/js/theme.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52934 - "GET /pocket-kit/components/js/toast.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52932 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-600.woff2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52923 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-italic.woff2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52924 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-regular.woff2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52925 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.woff2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52925 - "GET /api/tables HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52925 - "GET /api/table/customers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52925 - "GET /pocket-kit/lib/fonts/ibm-plex-mono/ibm-plex-mono-regular.woff2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52925 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52960 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52960 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53171 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53171 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53171 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53172 - "GET /pocket-kit/common.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53172 - "GET /pocket-kit/components/css/buttons.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53171 - "GET /pocket-kit/components/css/forms.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53172 - "GET /pocket-kit/components/css/tables.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53171 - "GET /pocket-kit/components/css/navigation.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53172 - "GET /pocket-kit/components/css/alerts.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53171 - "GET /pocket-kit/components/css/typography.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53172 - "GET /pocket-kit/components/css/loader.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53171 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-600.woff2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53172 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-regular.woff2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53171 - "GET /pocket-kit/lib/fonts/ibm-plex-sans/ibm-plex-sans-italic.woff2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53172 - "GET /pocket-kit/components/js/theme.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53171 - "GET /pocket-kit/components/js/toast.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53171 - "GET /pocket-kit/lib/fonts/remixicon/remixicon.woff2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53171 - "GET /api/tables HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53171 - "GET /api/table/customers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53171 - "GET /pocket-kit/lib/fonts/ibm-plex-mono/ibm-plex-mono-regular.woff2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53171 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53176 - "POST /api/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53177 - "POST /api/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53290 - "POST /api/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53290 - "GET /api/tables HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53290 - "GET /api/table/customers HTTP/1.1" 200 OK

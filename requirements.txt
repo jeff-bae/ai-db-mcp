@@ -1,4 +1,6 @@
 fastapi
 uvicorn[standard]
 anthropic
+openai
+mcp
 python-dotenv
