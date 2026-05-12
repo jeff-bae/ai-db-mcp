@@ -63,6 +63,7 @@ UI는 [pocket-kit](https://github.com/jeff-bae/pocket-kit) 디자인 시스템�
 | **통계 분석** | COUNT / SUM / AVG / GROUP BY 등 집계 쿼리 자동 생성 |
 | **자동 Fallback** | Anthropic 크레딧 부족 시 DeepSeek으로 자동 전환 |
 | **테이블 뷰** | 상단 탭으로 테이블 전환, 데이터 실시간 반영 |
+| **가독성 있는 주문 뷰** | orders 테이블에서 ID 대신 고객명·상품명으로 표시 (JOIN) |
 
 ---
 
@@ -72,7 +73,7 @@ UI는 [pocket-kit](https://github.com/jeff-bae/pocket-kit) 디자인 시스템�
 MCP Server   mcp (FastMCP + SSE transport)  ← port 8001
 Web Server   FastAPI + uvicorn              ← port 8000
 Database     SQLite3
-AI           Claude Sonnet (Anthropic) → DeepSeek Chat (fallback)
+AI           Claude Sonnet 4.6 (Anthropic) → DeepSeek Chat (fallback)
 Frontend     Vanilla JS + pocket-kit (PocketBase 디자인 시스템)
 ```
 
@@ -89,12 +90,18 @@ pip install -r requirements.txt
 
 ### 2. API 키 설정
 
-`.env` 파일에 키를 입력합니다.
+`.env.example`을 복사해 `.env`를 만들고 키를 입력합니다.
+
+```bash
+cp .env.example .env
+```
 
 ```env
 ANTHROPIC_API_KEY=sk-ant-...
 DEEPSEEK_API_KEY=sk-...        # 선택사항 — Anthropic 크레딧 부족 시 자동 사용
 ```
+
+> `DEEPSEEK_API_KEY`가 없어도 정상 실행됩니다. Anthropic이 기본값입니다.
 
 ### 3. 서버 시작
 
@@ -110,11 +117,21 @@ MCP Server ready at http://localhost:8001/sse
 INFO: Uvicorn running on http://0.0.0.0:8000
 ```
 
+> Windows에서는 `start.bat`을 더블클릭해도 됩니다.
+
 ### 4. 브라우저 접속
 
 ```
 http://localhost:8000
 ```
+
+### 5. 서버 종료
+
+```bash
+python stop.py
+```
+
+port 8000(FastAPI)과 8001(MCP Server) 프로세스를 모두 종료합니다.
 
 ---
 
@@ -122,16 +139,19 @@ http://localhost:8000
 
 ```
 ai-mcp-db/
-├── mcp_server.py       # MCP 서버 (SQLite 도구 3개 정의)
-├── app.py              # FastAPI 서버 + MCP 클라이언트 + AI 채팅
+├── app.py              # FastAPI 서버 + MCP 클라이언트 + AI 채팅 (port 8000)
+├── mcp_server.py       # MCP 서버 — SQLite 도구 3개 정의 (port 8001)
+├── stop.py             # 서버 종료 스크립트 (port 8000, 8001)
+├── start.bat           # Windows 실행 스크립트
+├── requirements.txt
+├── .env.example        # API 키 설정 예시 (.env로 복사 후 사용)
 ├── static/
 │   └── index.html      # 프론트엔드 (채팅 UI + 데이터 뷰)
 ├── pocket-kit/         # UI 디자인 시스템 (최초 실행 시 자동 클론)
-├── demo.db             # SQLite DB (최초 실행 시 자동 생성)
-├── .env                # API 키 설정
-├── requirements.txt
-└── start.bat           # Windows 실행 스크립트
+└── demo.db             # SQLite DB (최초 실행 시 자동 생성)
 ```
+
+> `pocket-kit/`와 `demo.db`는 최초 실행 시 자동으로 생성됩니다. git에 포함되지 않습니다.
 
 ---
 
@@ -144,6 +164,26 @@ ai-mcp-db/
 | `get_schema` | 테이블 목록·컬럼 구조·행 수 조회 | 질문을 처음 받았을 때 |
 | `query_database` | SELECT SQL 실행 (조회 전용) | 데이터 조회·통계 요청 시 |
 | `modify_database` | INSERT / UPDATE / DELETE 실행 | 데이터 추가·수정·삭제 요청 시 |
+
+---
+
+## AI Fallback 동작 방식
+
+```
+사용자 요청
+    │
+    ▼
+Anthropic (기본)
+    │ 크레딧 부족 / 인증 오류
+    ▼
+DeepSeek (자동 전환)
+    │ DEEPSEEK_API_KEY 없으면 오류 메시지 반환
+    └──────────────────────────────────────────
+```
+
+- 세션이 유지되는 동안 한 번 전환되면 DeepSeek으로 계속 사용
+- `/api/reset` 호출 시 Anthropic으로 초기화
+- `/api/status`에서 현재 사용 중인 provider 확인 가능
 
 ---
 
@@ -183,7 +223,7 @@ ai-mcp-db/
 | Method | Path | 설명 |
 |---|---|---|
 | `POST` | `/api/chat` | AI 채팅 (자연어 → MCP → SQL 실행) |
-| `POST` | `/api/reset` | 대화 기록 초기화 |
+| `POST` | `/api/reset` | 대화 기록 초기화 + Anthropic으로 provider 재설정 |
 | `GET` | `/api/status` | 현재 AI 프로바이더 및 MCP 서버 정보 |
 | `GET` | `/api/tables` | 전체 테이블 스키마 조회 |
 | `GET` | `/api/table/{name}` | 특정 테이블 데이터 조회 |
