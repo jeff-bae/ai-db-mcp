@@ -14,5 +14,6 @@ server.log
 
 # pocket-kit은 자동 클론되므로 제외
 pocket-kit/
-.env
-.env
+
+# Claude Code
+.claude/
