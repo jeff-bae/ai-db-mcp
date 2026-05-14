@@ -91,11 +91,33 @@
     /* ── Left: Chat panel ── */
     .chat-panel {
       width: 420px;
-      min-width: 320px;
+      min-width: 240px;
+      max-width: 70%;
       display: flex;
       flex-direction: column;
-      border-right: 1px solid var(--surfaceAlt2Color);
       background: var(--surfaceColor);
+      flex-shrink: 0;
+    }
+
+    /* ── Resize handle ── */
+    .resize-handle {
+      width: 5px;
+      min-width: 5px;
+      background: var(--surfaceAlt2Color);
+      cursor: col-resize;
+      transition: background 0.15s;
+      position: relative;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+    .resize-handle::after {
+      content: '';
+      position: absolute;
+      inset: 0 -3px;
+    }
+    .resize-handle:hover,
+    .resize-handle.dragging {
+      background: var(--accentColor);
     }
     .panel-header {
       padding: 14px 18px;
@@ -566,7 +588,7 @@
   <div class="main">
 
     <!-- ── Chat panel ── -->
-    <div class="chat-panel">
+    <div class="chat-panel" id="chatPanel">
       <div class="panel-header">
         <div class="panel-title">
           <i class="ri-sparkling-line"></i>
@@ -610,6 +632,9 @@
         </div>
       </div>
     </div>
+
+    <!-- ── Resize handle ── -->
+    <div class="resize-handle" id="resizeHandle"></div>
 
     <!-- ── Data panel ── -->
     <div class="data-panel">
@@ -957,6 +982,40 @@
     });
 
     init();
+
+    // ── Chat panel resize ─────────────────────────────────
+    (function() {
+      const handle   = document.getElementById('resizeHandle');
+      const panel    = document.getElementById('chatPanel');
+      let dragging   = false;
+      let startX     = 0;
+      let startWidth = 0;
+
+      handle.addEventListener('mousedown', e => {
+        dragging   = true;
+        startX     = e.clientX;
+        startWidth = panel.offsetWidth;
+        handle.classList.add('dragging');
+        document.body.style.cursor     = 'col-resize';
+        document.body.style.userSelect = 'none';
+      });
+
+      document.addEventListener('mousemove', e => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        const min = parseInt(getComputedStyle(panel).minWidth) || 240;
+        const max = window.innerWidth * 0.70;
+        panel.style.width = Math.min(Math.max(startWidth + dx, min), max) + 'px';
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (!dragging) return;
+        dragging = false;
+        handle.classList.remove('dragging');
+        document.body.style.cursor     = '';
+        document.body.style.userSelect = '';
+      });
+    })();
   </script>
 </body>
 </html>
