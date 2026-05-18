@@ -16,6 +16,10 @@ import random
 
 import anthropic
 from dotenv import load_dotenv
+
+# ── Local AI configuration ───────────────────────────────────
+LOCAL_AI_API_KEY = os.environ.get("LOCAL_AI_API_KEY", "")
+LOCAL_AI_BASE_URL = os.environ.get("LOCAL_AI_BASE_URL", "http://PathToYourServer:8000/v1")
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -67,6 +71,16 @@ deepseek_client = (
     if _deepseek_key else None
 )
 
+# Local AI client (OpenAI-compatible)
+_local_ai_key = os.environ.get("LOCAL_AI_API_KEY", "")
+_local_ai_base_url = os.environ.get("LOCAL_AI_BASE_URL", "http://PathToYourServer:8000/v1")
+local_ai_client = (
+    OpenAI(api_key=_local_ai_key, base_url=_local_ai_base_url)
+    if _local_ai_key else None
+)
+
+# Local AI model config
+LOCAL_AI_MODEL = os.environ.get("LOCAL_AI_MODEL", "qwen-coder")
 SYSTEM_PROMPT = """당신은 SQLite 데이터베이스를 관리하는 AI 어시스턴트입니다.
 사용자의 한국어 자연어 요청을 이해하여 적절한 SQL 쿼리를 실행합니다.
 
@@ -230,7 +244,7 @@ def init_db():
 
 
 # ── Conversation state ─────────────────────────────────────
-active_provider: str = "anthropic"
+active_provider: str = "local"
 anthropic_history: list = []
 deepseek_history:  list = []
 
@@ -360,6 +374,69 @@ async def run_deepseek(user_message: str):
     return reply, tool_calls_log, data_changed
 
 
+# ── Local AI + MCP agentic loop ─────────────────────────────
+
+async def run_local_ai(user_message: str):
+    if local_ai_client is None:
+        raise RuntimeError("LOCAL_AI_API_KEY가 설정되지 않았습니다.")
+    
+    if not deepseek_history:  # Reusing same history buffer for local AI
+        deepseek_history.append({"role": "system", "content": SYSTEM_PROMPT})
+    deepseek_history.append({"role": "user", "content": user_message})
+    tool_calls_log, data_changed, reply = [], False, ""
+
+    async with sse_client(MCP_URL) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            tools_resp = await session.list_tools()
+            o_tools = to_openai_tools(tools_resp.tools)
+
+            while True:
+                response = local_ai_client.chat.completions.create(
+                    model=LOCAL_AI_MODEL,
+                    messages=deepseek_history,
+                    tools=o_tools,
+                    tool_choice="auto",
+                    max_tokens=2048,
+                )
+                choice = response.choices[0]
+
+                if choice.finish_reason == "stop":
+                    reply = choice.message.content or ""
+                    deepseek_history.append({"role": "assistant", "content": reply})
+                    break
+
+                if choice.finish_reason == "tool_calls":
+                    deepseek_history.append(choice.message)
+
+                    for tc in choice.message.tool_calls:
+                        try:
+                            inp = json.loads(tc.function.arguments)
+                        except Exception:
+                            inp = {}
+                        # ★ MCP 서버에 도구 실행 요청
+                        mcp_result = await session.call_tool(tc.function.name, inp)
+                        result_dict = parse_mcp_result(mcp_result)
+
+                        tool_calls_log.append({
+                            "tool":   tc.function.name,
+                            "input":  inp,
+                            "result": result_dict,
+                        })
+                        if tc.function.name == "modify_database" and result_dict.get("success"):
+                            data_changed = True
+
+                        deepseek_history.append({
+                            "role":         "tool",
+                            "tool_call_id": tc.id,
+                            "content":      json.dumps(result_dict, ensure_ascii=False, default=str),
+                        })
+                else:
+                    break
+
+    return reply, tool_calls_log, data_changed
+
+
 # ── API models ─────────────────────────────────────────────
 
 class ChatRequest(BaseModel):
@@ -372,23 +449,39 @@ class ChatResponse(BaseModel):
     provider: str
 
 
+class ProviderRequest(BaseModel):
+    provider: str
+
+
+# ── Helper functions for AI providers ──────────────────────
+
+async def _deepseek_safe(msg):
+    try:
+        return await run_deepseek(msg)
+    except RuntimeError as e:
+        return str(e), [], False
+    except Exception as e:
+        err = str(e)
+        if "402" in err or "Insufficient Balance" in err:
+            return ("DeepSeek 크레딧이 부족합니다.\n"
+                    "https://platform.deepseek.com 에서 충전해 주세요."), [], False
+        return f"DeepSeek 오류: {err}", [], False
+
+
+async def _local_ai_safe(msg):
+    try:
+        return await run_local_ai(msg)
+    except RuntimeError as e:
+        return str(e), [], False
+    except Exception as e:
+        return f"Local AI 오류: {e}", [], False
+
+
 # ── Chat endpoint ──────────────────────────────────────────
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest):
     global active_provider
-
-    async def _deepseek_safe(msg):
-        try:
-            return await run_deepseek(msg)
-        except RuntimeError as e:
-            return str(e), [], False
-        except Exception as e:
-            err = str(e)
-            if "402" in err or "Insufficient Balance" in err:
-                return ("DeepSeek 크레딧이 부족합니다.\n"
-                        "https://platform.deepseek.com 에서 충전해 주세요."), [], False
-            return f"DeepSeek 오류: {err}", [], False
 
     reply, tool_calls_log, data_changed = "", [], False
 
@@ -408,8 +501,12 @@ async def chat(req: ChatRequest):
             reply, tool_calls_log, data_changed = await _deepseek_safe(req.message)
         except Exception as e:
             reply = f"오류: {str(e)}"
-    else:
+    elif active_provider == "deepseek":
         reply, tool_calls_log, data_changed = await _deepseek_safe(req.message)
+    elif active_provider == "local":
+        reply, tool_calls_log, data_changed = await _local_ai_safe(req.message)
+    else:
+        reply = f"알 수 없는 프로바이더: {active_provider}"
 
     return ChatResponse(
         reply=reply,
@@ -434,8 +531,20 @@ async def get_status():
         "provider":             active_provider,
         "anthropic_configured": bool(os.environ.get("ANTHROPIC_API_KEY")),
         "deepseek_configured":  deepseek_client is not None,
+        "local_ai_configured":  local_ai_client is not None,
+        "local_ai_model":       LOCAL_AI_MODEL,
+        "local_ai_base_url":    _local_ai_base_url,
         "mcp_server":           MCP_URL,
     }
+
+
+@app.post("/api/provider")
+async def set_provider(req: ProviderRequest):
+    global active_provider
+    if req.provider not in ("anthropic", "deepseek", "local"):
+        raise HTTPException(status_code=400, detail="Invalid provider")
+    active_provider = req.provider
+    return {"ok": True}
 
 
 # ── Table view endpoints ───────────────────────────────────

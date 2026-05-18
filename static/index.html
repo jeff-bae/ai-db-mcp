@@ -576,12 +576,19 @@
       <!-- populated by JS -->
     </div>
     <div class="topbar-right">
-      <span id="providerBadge" class="topbar-badge" style="background:var(--surfaceAccentColor);color:var(--accentColor)">claude-sonnet</span>
-      <span class="topbar-badge" id="statusBadge">● 연결됨</span>
-      <button class="tab-btn" id="resetBtn" title="대화 초기화">
-        <i class="ri-restart-line"></i>
-      </button>
-    </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <select id="providerSelect" class="tab-btn" style="padding:5px 10px;border-radius:var(--borderRadius);border:1px solid var(--surfaceAlt3Color);background:var(--surfaceColor);color:var(--surfaceTxtColor);cursor:pointer;min-width:100px;">
+            <option value="anthropic" style="background:var(--surfaceColor);color:var(--surfaceTxtColor);">Claude</option>
+            <option value="deepseek" style="background:var(--surfaceColor);color:var(--surfaceTxtColor);">DeepSeek</option>
+            <option value="local" style="background:var(--surfaceColor);color:var(--surfaceTxtColor);">Local AI</option>
+          </select>
+          <span id="providerBadge" class="topbar-badge" style="background:var(--surfaceAccentColor);color:var(--accentColor)">claude-sonnet</span>
+        </div>
+       <span class="topbar-badge" id="statusBadge">● 연결됨</span>
+       <button class="tab-btn" id="resetBtn" title="대화 초기화">
+         <i class="ri-restart-line"></i>
+       </button>
+     </div>
   </div>
 
   <!-- ── Main ── -->
@@ -810,7 +817,7 @@
         const data = await res.json();
         typingEl.remove();
         appendAIMessage(data);
-        updateProviderBadge(data.provider);
+        updateProviderBadgeUI(data.provider);
 
         if (data.data_changed) {
           await loadTables();
@@ -934,13 +941,36 @@
       document.getElementById('sendBtn').disabled = v;
     }
 
-    function updateProviderBadge(provider) {
+    // ── Provider selection ─────────────────────────────────
+    const providerSelect = document.getElementById('providerSelect');
+    
+    async function updateProviderBadge() {
+      try {
+        await fetch('/api/provider', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ provider: providerSelect.value })
+        });
+        updateProviderBadgeUI(providerSelect.value);
+        appendSystemNotice(`AI 프로바이더를 ${providerSelect.value === 'anthropic' ? 'Claude' : providerSelect.value === 'deepseek' ? 'DeepSeek' : 'Local AI'}로 변경했습니다.`);
+      } catch (e) {
+        console.error('Provider update failed:', e);
+      }
+    }
+    
+    providerSelect.addEventListener('change', updateProviderBadge);
+
+    function updateProviderBadgeUI(provider) {
       const badge = document.getElementById('providerBadge');
       if (!badge) return;
       if (provider === 'deepseek') {
         badge.textContent = 'deepseek-chat';
         badge.style.background = 'var(--surfaceWarningColor)';
         badge.style.color = 'var(--warningColor)';
+      } else if (provider === 'local') {
+        badge.textContent = 'Local AI';
+        badge.style.background = 'var(--surfaceSuccessColor)';
+        badge.style.color = 'var(--successColor)';
       } else {
         badge.textContent = 'claude-sonnet';
         badge.style.background = 'var(--surfaceAccentColor)';
