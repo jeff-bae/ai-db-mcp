@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-AI-MCP-DB  ·  FastAPI 메인 서버 (port 8000)
-- MCP Server (mcp_server.py, port 8001) 를 subprocess로 기동
+AI-MCP-DB  ·  FastAPI 메인 서버 (port 8801)
+- MCP Server (mcp_server.py, port 8802) 를 subprocess로 기동
 - Claude / DeepSeek AI 가 MCP 클라이언트를 통해 SQLite 도구를 호출
 """
 import asyncio
@@ -611,4 +611,4 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=False)
+    uvicorn.run(app, host="0.0.0.0", port=8801, reload=False)

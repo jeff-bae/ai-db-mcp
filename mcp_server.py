@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 SQLite MCP Server
-- FastMCP + SSE transport (port 8001)
+- FastMCP + SSE transport (port 8802)
 - 3가지 도구: get_schema / query_database / modify_database
 """
 import json
@@ -93,5 +93,5 @@ if __name__ == "__main__":
 
     # FastMCP SSE 앱을 uvicorn으로 직접 실행
     sse_app = mcp.sse_app()
-    print("SQLite MCP Server running on http://0.0.0.0:8001/sse")
+    print("SQLite MCP Server running on http://0.0.0.0:8802/sse")
     uvicorn.run(sse_app, host="0.0.0.0", port=8001, log_level="warning")
