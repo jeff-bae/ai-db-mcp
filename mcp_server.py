@@ -94,4 +94,4 @@ if __name__ == "__main__":
     # FastMCP SSE 앱을 uvicorn으로 직접 실행
     sse_app = mcp.sse_app()
     print("SQLite MCP Server running on http://0.0.0.0:8802/sse")
-    uvicorn.run(sse_app, host="0.0.0.0", port=8001, log_level="warning")
+    uvicorn.run(sse_app, host="0.0.0.0", port=8002, log_level="warning")
